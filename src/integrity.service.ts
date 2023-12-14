@@ -6,7 +6,9 @@ import * as process from 'process';
 
 @Injectable()
 export class IntegrityService implements OnModuleInit {
-  collections = process.env.ASIO_INTEGRITY_COLLECTIONS.split(',');
+  collections = (process.env.ASIO_INTEGRITY_COLLECTIONS || '')
+    .split(',')
+    .filter((x) => x);
 
   constructor(
     private arangodb: ArangodbService,
