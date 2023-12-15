@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.1.0 - 2023-12-15
+#### Features
+- reversing dependency. publish as lib not service. - (818b046) - orgal
+#### Miscellaneous Chores
+- bump version to 0.0.2 - (51f1216) - GitHub Action
+- - -
+
 ## 0.0.2 - 2023-12-14
 #### Bug Fixes
 - support no collections var - (3903bd9) - orgal
