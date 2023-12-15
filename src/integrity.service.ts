@@ -1,19 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ArangodbService } from '@appstack-io/arangodb';
-import { ClientService } from '@appstack-io/client';
-import * as capitalize from 'lodash.capitalize';
-import * as process from 'process';
 
 @Injectable()
-export class IntegrityService implements OnModuleInit {
-  collections = (process.env.ASIO_INTEGRITY_COLLECTIONS || '')
-    .split(',')
-    .filter((x) => x);
-
-  constructor(
-    private arangodb: ArangodbService,
-    private clientService: ClientService,
-  ) {}
+export class IntegrityService {
+  constructor(private arangodb: ArangodbService) {}
 
   async *findByPermissionIntegrityWarning(
     collection: string,
@@ -33,14 +23,6 @@ export class IntegrityService implements OnModuleInit {
     }
   }
 
-  async updateOne(input: { collection: string; id: string }): Promise<void> {
-    await this.clientService.invokeUnaryInernal({
-      service: `${capitalize(input.collection)}Service`,
-      method: 'UpdateOne',
-      data: { id: input.id },
-    });
-  }
-
   async removeTemps(input: {
     collection: string;
     millisAgo: number;
@@ -55,29 +37,5 @@ export class IntegrityService implements OnModuleInit {
       ...input,
     };
     await this.arangodb.db.query(query, vars);
-  }
-
-  async onModuleInit(): Promise<void> {
-    await this.arangodb.utils.tryDdl(
-      ...this.collections.map(
-        (collection) => () => this.arangodb.db.createCollection(collection, {}), // TODO: dangerous because would lock in empty options.
-      ),
-      ...this.collections.map(
-        (collection) => () =>
-          this.arangodb.db.collection(collection).ensureIndex({
-            name: `idx-${collection}-integrity-warning-v1`,
-            type: 'persistent',
-            fields: ['integrityWarning'],
-          }),
-      ),
-      ...this.collections.map(
-        (collection) => () =>
-          this.arangodb.db.collection(collection).ensureIndex({
-            name: `idx-${collection}-is-temp-v1`,
-            type: 'persistent',
-            fields: ['isTemp'],
-          }),
-      ),
-    );
   }
 }

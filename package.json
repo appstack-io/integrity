@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@appstack-io/arangodb": "^0.6.5",
-    "@appstack-io/client": "^0.1.4",
     "@appstack-io/mq": "^0.3.2",
+    "@appstack-io/permissions": "^0.2.2",
     "@nestjs/common": "^10.2.10",
     "lodash.capitalize": "^4.2.1"
   },
